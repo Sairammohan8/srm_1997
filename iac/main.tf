@@ -21,7 +21,7 @@ resource "aws_internet_gateway" "my_igw" {
 
 # Attach internet gateway to VPC
 resource "aws_vpc_attachment" "my_igw_attachment" {
-  vpc_id       = aws_vpc.my_vpc.id
+  vpc_id              = aws_vpc.my_vpc.id
   internet_gateway_id = aws_internet_gateway.my_igw.id
 }
 
@@ -71,6 +71,7 @@ resource "aws_security_group" "my_security_group" {
 
 # Define EC2 instance
 resource "aws_instance" "my_instance" {
-  ami             = "your_ami_id"
-  instance_type   = "t2.micro"
-  subnet_id       = 
+  ami           = "your_ami_id"
+  instance_type = "t2.micro"
+  subnet_id     = "my_subnet"
+}
