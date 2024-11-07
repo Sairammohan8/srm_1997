@@ -1,11 +1,5 @@
 # Frontend
 
-The frontend is the service in Expense to serve the web content over Nginx. This will have the web frame for the web application.
-
-This is a static content and to serve static content we need a web server. This server
-
-Developer has chosen Nginx as a web server and thus we will install Nginx Web Server.
-
 Install Nginx
 ```
 dnf install nginx -y 
@@ -19,32 +13,33 @@ Start nginx
 systemctl start nginx
 ```
 
-**Try to access the service once over the browser and ensure you get some default content**
+**Try to access the service once over the browser and ensure we get some default content**
 
-Remove the default content that web server is serving.
+We need to remove the default content that web server is serving.
 ```
 rm -rf /usr/share/nginx/html/*
 ```
 
-Download the frontend content
+To download the frontend content
 ```
 curl -o /tmp/frontend.zip https://expense-builds.s3.us-east-1.amazonaws.com/expense-frontend-v2.zip
 ```
-Extract the frontend content.
+Extract the frontend content to "/usr/share/nginx/html"
 ```
 cd /usr/share/nginx/html
 ```
 ```
-unzip /tmp/frontend.zip
+Extract in "/usr/share/nginx/html"
+unzip /tmp/frontend.zip 
 ```
 
-**Try to access the nginx service once more over the browser and ensure you get expense content.**
+**Try to access the nginx service once more over the browser and ensure we get expense content.**
 
-Create Nginx Reverse Proxy Configuration.
+We need to create Nginx Reverse Proxy Configuration.
 ```
 vim /etc/nginx/default.d/expense.conf
 ```
-Add the following content
+Add the following content for Reverse Proxy Configuration
 ```
 proxy_http_version 1.1;
 
@@ -56,8 +51,35 @@ location /health {
 }
 ```
 
-**Ensure you replace the localhost with the actual ip address of backend component server. Word localhost is just used to avoid the failures on the Nginx Server.**
+**Ensure we replace the localhost with the actual ip address of backend component server. Word localhost is just used to avoid the failures on the Nginx Server.**
+-----
+We can use Nginx server as load-baancer
 
+Modify the /etc/nginx/nginx.conf
+
+http {
+  upstream backend {
+    server <IP1>;
+    server <IP2>;
+    .
+    .
+    .
+    server <IPn>;
+  }
+}
+
+and modify the Reverse Proxy Configuration vim /etc/nginx/default.d/expense.conf
+```
+proxy_http_version 1.1;
+
+location /api/ { proxy_pass http://backend:8080/; }
+
+location /health {
+  stub_status on;
+  access_log off;
+}
+------
+```
 Restart Nginx Service to load the changes of the configuration.
 
 ```
