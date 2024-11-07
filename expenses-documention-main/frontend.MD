@@ -2,7 +2,7 @@
 
 Install Nginx
 ```
-dnf install nginx -y 
+dnf install nginx -y
 ```
 Enable nginx
 ```
